@@ -1,6 +1,7 @@
 import smtplib, imaplib
 from email.message import EmailMessage
 import ssl
+import email
 
 file = open("assets/recipients.txt", "r")
 recipients = file.read().split("\n")
@@ -31,14 +32,26 @@ def send_email(subject, body, sender, receiver):
 def read_mail(receiver):
     with imaplib.IMAP4_SSL("imap.gmail.com", 993, ssl_context=context) as imap_server:
         imap_server.login(receiver, pwd)
-        imap_server.select()
-        typ, data = imap_server.search(None, 'ALL')
-        for num in data[0].split():
-            typ, data = imap_server.fetch(num, '(RFC822)')
-            print('Message %s\n%s\n' % (num, data[0][1]))
-
+        imap_server.select('inbox')
+        typ, data_search = imap_server.search(None, 'ALL')
+        counter = 0
+        for num in data_search[0].split():
+            data = imap_server.fetch(num, '(RFC822)')
+            for response_part in data:
+                arr = response_part[0]
+                if isinstance(arr, tuple):
+                    msg = email.message_from_string(str(arr[1], 'utf-8'))
+                    email_subject = msg['subject']
+                    email_from = msg['from']
+                    date = msg['Date']
+                    print("date", date, "\n")
+                    print(counter+1, "From: " + email_from + "\n")
+                    print("Subject: " + email_subject + "\n")
+                    print("-"*100)
+            if counter > 0:
+                break
+            counter += 1
         imap_server.close()
-        imap_server.logout()
 
 
 if __name__=="__main__":
