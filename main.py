@@ -40,7 +40,7 @@ def read_mail(receiver):
             for response_part in data:
                 arr = response_part[0]
                 if isinstance(arr, tuple):
-                    msg = email.message_from_string(str(arr[1], 'utf-8'))
+                    msg = email.message_from_bytes(arr[1])
                     email_subject = msg['subject']
                     email_from = msg['from']
                     date = msg['Date']
@@ -48,6 +48,7 @@ def read_mail(receiver):
                     print(counter+1, "From: " + email_from + "\n")
                     print("Subject: " + email_subject + "\n")
                     print("-"*100)
+                    print(body)
             if counter > 0:
                 break
             counter += 1
