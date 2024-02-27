@@ -33,25 +33,28 @@ def read_mail(receiver):
     with imaplib.IMAP4_SSL("imap.gmail.com", 993, ssl_context=context) as imap_server:
         imap_server.login(receiver, pwd)
         imap_server.select('inbox')
-        typ, data_search = imap_server.search(None, 'ALL')
-        counter = 0
-        for num in data_search[0].split():
-            data = imap_server.fetch(num, '(RFC822)')
+        response, messages = imap_server.search(None, 'Unseen')
+        messages = messages[0].split()
+        latest = int(messages[-1])
+        oldest = int(messages[0])
+
+        for i in range(latest, latest-5, -1):
+            data = imap_server.fetch(str(i), '(RFC822)')
             for response_part in data:
                 arr = response_part[0]
                 if isinstance(arr, tuple):
                     msg = email.message_from_bytes(arr[1])
-                    email_subject = msg['subject']
-                    email_from = msg['from']
-                    date = msg['Date']
-                    print("date", date, "\n")
-                    print(counter+1, "From: " + email_from + "\n")
-                    print("Subject: " + email_subject + "\n")
+
+                    print("date", msg['Date'], "\n")
+                    print("From: " + msg['from'] + "\n")
+                    print("Subject: " + msg['subject'] + "\n")
+
+                    for part in msg.walk():
+                        if part.get_content_type() == "text/plain":
+                            body = part.get_payload(decode=True)
+                            print("Body: \n" + body.decode('utf-8') + "\n")
                     print("-"*100)
-                    print(body)
-            if counter > 0:
-                break
-            counter += 1
+
         imap_server.close()
 
 
