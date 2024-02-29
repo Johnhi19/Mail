@@ -36,7 +36,6 @@ def read_mail(receiver):
         response, messages = imap_server.search(None, 'Unseen')
         messages = messages[0].split()
         latest = int(messages[-1])
-        oldest = int(messages[0])
 
         for i in range(latest, latest-5, -1):
             data = imap_server.fetch(str(i), '(RFC822)')
@@ -57,7 +56,27 @@ def read_mail(receiver):
 
         imap_server.close()
 
+def gui():
+    print("This is your email service. What do you want to do? \n")
+    print("1. Send an email \n")
+    print("2. Read your latest 5 emails \n")
+    print("3. Exit \n")
+    choice = input("Enter your choice: ")
+    match choice:
+        case "1":
+            receiver = input("Enter the reciever email: ")
+            subject = input("Enter the subject: ")
+            body = input("Enter the body: ")
+            send_email(subject, body, sender, receiver)
+        case "2":
+            read_mail(receiver)
+        case "3":
+            exit()
+        case _:
+            print("Invalid choice. Please try again.")
+            gui()
+    
+
 
 if __name__=="__main__":
-    #send_email(subject, body, sender, receiver)
-    read_mail(sender)
+    gui()
