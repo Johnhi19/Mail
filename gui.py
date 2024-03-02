@@ -10,7 +10,12 @@ class Gui:
         self.sender = input("Enter your email: ")
         self.pwd = input("Enter your password: ")
         self.gui()
-
+    
+    def get_login_credentials(self, file_path):
+        with open(file_path, "r") as file:
+            self.sender = file.readline()
+            self.pwd = file.readline()
+            
     def gui(self):
         print("This is your email service. What do you want to do? \n")
         print("1. Send an email \n")
