@@ -6,12 +6,20 @@ class Gui:
         self.login()
 
     def login(self):
-        print("This is your email service. Please log in. \n")
-        self.sender = input("Enter your email: ")
-        self.pwd = input("Enter your password: ")
+        print("This is your email service. Please log in by either providing a path to the username and password (1.) or you can type in the user name and password manually (2.). \n")
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            path = input("Enter the path to your login credentials file: ")
+            self.login_with_file(path)
+        elif choice == "2":
+            self.sender = input("Enter your email: ")
+            self.pwd = input("Enter your password: ")
+        else:
+            print("Invalid choice. Please try again.")
+            self.login()
         self.gui()
-    
-    def get_login_credentials(self, file_path):
+
+    def login_with_file(self, file_path):
         with open(file_path, "r") as file:
             self.sender = file.readline()
             self.pwd = file.readline()
@@ -34,4 +42,4 @@ class Gui:
                 exit()
             case _:
                 print("Invalid choice. Please try again.")
-                self.gui()
+        self.gui()
