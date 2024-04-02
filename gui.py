@@ -37,7 +37,7 @@ class Gui:
                 body = input("Enter the body: ")
                 self.email_service.send_email(subject, body, self.sender, receiver, self.pwd)
             case "2":
-                self.email_service.read_mail(receiver, self.pwd)
+                self.email_service.read_mail(self.sender, self.pwd)
             case "3":
                 exit()
             case _:
