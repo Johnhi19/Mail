@@ -1,4 +1,4 @@
-import gui
+import terminalui
 import smtplib, imaplib
 from email.message import EmailMessage
 import ssl
@@ -19,4 +19,4 @@ context = ssl.create_default_context()
 
 
 if __name__=="__main__":
-    ui = gui.Gui()
+    ui = terminalui.Terminalui()

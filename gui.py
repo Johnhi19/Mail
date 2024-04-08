@@ -1,45 +1,50 @@
-from emailServices import EmailService
+from tkinter import *
 
 class Gui:
     def __init__(self):
-        self.email_service = EmailService()
-        self.login()
+        self.master = Tk()
+        self.master.geometry('500x500')
 
-    def login(self):
-        print("This is your email service. Please log in by either providing a path to the username and password (1.) or you can type in the user name and password manually (2.). \n")
-        choice = input("Enter your choice: ")
-        if choice == "1":
-            path = input("Enter the path to your login credentials file: ")
-            self.login_with_file(path)
-        elif choice == "2":
-            self.sender = input("Enter your email: ")
-            self.pwd = input("Enter your password: ")
+        self.login_frame = Frame(self.master)
+        self.error_frame = Frame(self.master)
+        self.nogmail_error_frame = Frame(self.master)
+        self.welcome_frame = Frame(self.master)
+
+
+    def login_screen(self):
+        Label(self.login_frame, text='E-Mail').grid(row=0)
+        Label(self.login_frame, text='Password').grid(row=1)
+
+        self.e1 = Entry(self.login_frame, width=50)
+        self.e1.grid(row=0, column=1)
+        self.e2 = Entry(self.login_frame, width=50)
+        self.e2.grid(row=1, column=1)
+
+        Button(self.login_frame, text='Login', command=self.save_input).grid(row=3, column=1, columnspan=2, pady=4)
+        self.login_frame.pack()
+
+    def error_screen_nogmail(self):
+        Label(self.nogmail_error_frame, text='Please enter a valid gmail address').pack()
+        Button(self.nogmail_error_frame, text='Try Again', command=self.login_screen).pack()
+        self.nogmail_error_frame.pack()
+
+    def save_input(self):
+        self.email = self.e1.get()
+        self.pwd = self.e2.get()
+        self.check_input()
+    
+    def check_input(self):
+        if not self.email.endswith('@gmail.com'):
+            self.login_frame.pack_forget()
+            self.error_screen_nogmail()
         else:
-            print("Invalid choice. Please try again.")
-            self.login()
-        self.gui()
+            self.login_frame.pack_forget()
+            self.welcome_frame.pack()
 
-    def login_with_file(self, file_path):
-        with open(file_path, "r") as file:
-            self.sender = file.readline()
-            self.pwd = file.readline()
-            
-    def gui(self):
-        print("This is your email service. What do you want to do? \n")
-        print("1. Send an email \n")
-        print("2. Read your latest 5 emails \n")
-        print("3. Exit \n")
-        choice = input("Enter your choice: ")
-        match choice:
-            case "1":
-                receiver = input("Enter the reciever email: ")
-                subject = input("Enter the subject: ")
-                body = input("Enter the body: ")
-                self.email_service.send_email(subject, body, self.sender, receiver, self.pwd)
-            case "2":
-                self.email_service.read_mail(self.sender, self.pwd)
-            case "3":
-                exit()
-            case _:
-                print("Invalid choice. Please try again.")
-        self.gui()
+    def run(self):
+        self.login_screen()
+        self.master.mainloop()
+
+
+gui = Gui()
+gui.run()
