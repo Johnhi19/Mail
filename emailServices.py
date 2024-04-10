@@ -46,3 +46,11 @@ class EmailService:
                         print("-"*100)
 
             imap_server.close()
+        
+    def verify_email_pwd(self, email, pwd):
+        try:
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=self.context) as smtp_server:
+                smtp_server.login(email, pwd)
+                return True
+        except:
+            return False
