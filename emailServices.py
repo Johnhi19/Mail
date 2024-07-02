@@ -7,22 +7,32 @@ class EmailService:
     def __init__(self):
         self.context = ssl.create_default_context()
 
-    def send_email(self, subject, body, sender, receiver, pwd):
+    def login(self, sender, pwd):
+        try:
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=self.context) as smtp_server:
+                smtp_server.login(sender, pwd)
+                self.sender = sender
+                self.pwd = pwd
+        except:
+            raise AssertionError(f"Failed to login for {sender}")
+
+        
+    def send_email(self, subject, body, receiver):
         msg = EmailMessage()
-        msg['From'] = sender
+        msg['From'] = self.sender
         msg['To'] = receiver
         msg['Subject'] = subject
         msg.set_content(body)
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=self.context) as smtp_server:
-            smtp_server.login(sender, pwd)
-            smtp_server.sendmail(sender, receiver, msg.as_string())
+            smtp_server.login(self.sender, self.pwd)
+            smtp_server.sendmail(self.sender, receiver, msg.as_string())
             smtp_server.quit()
         print('Message sent!')
 
-    def read_mail(self, receiver, pwd):
+    def read_mail(self):
         with imaplib.IMAP4_SSL("imap.gmail.com", 993, ssl_context=self.context) as imap_server:
-            imap_server.login(receiver, pwd)
+            imap_server.login(self.sender, self.pwd)
             imap_server.select('inbox')
             response, messages = imap_server.search(None, 'Unseen')
             messages = messages[0].split()
@@ -46,11 +56,3 @@ class EmailService:
                         print("-"*100)
 
             imap_server.close()
-        
-    def verify_email_pwd(self, email, pwd):
-        try:
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=self.context) as smtp_server:
-                smtp_server.login(email, pwd)
-                return True
-        except:
-            return False
