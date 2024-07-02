@@ -1,17 +1,35 @@
 <html>
     <head>
         <link rel="stylesheet" href='/static/style.css' />
+        <style>
+            button {
+                background-color: #013e83;
+                border: none;
+                color: white; 
+                padding: 15px 32px; 
+                text-align: center;
+                text-decoration: none; 
+                display: inline-block; /* Inline-block elements */
+                font-size: 16px; /* Text size */
+                margin: 4px 2px; /* Margin around buttons */
+                cursor: pointer; /* Pointer/hand icon */
+                border-radius: 8px; /* Rounded corners */
+            }
+
+            /* Add styles for hover effect */
+            button:hover {
+                background-color: #012855; 
+            }
+        </style>
     </head>
     <body>
         <h1>Services</h1>
-        <form action='', method='post'>
+        <form action="{{ url_for('services') }}" method="post">
             <div>
-                <label for='send_email'>Send email:</label><br>
-                <input type='text' id='service' name='service' required>
+                <button type="submit" name="action" value="send_email">Send email</button>
             </div>
             <div>
-                <label for='read_email'>Read emails:</label><br>
-                <input type='text' id='description' name='description' required>
+                <button type="submit" name="action" value="read_email">Read emails</button>
             </div>
         </form>
     </body>

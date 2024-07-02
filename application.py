@@ -28,7 +28,13 @@ def login():
 
 @application.route('/services', methods=['POST', 'GET'])
 def services():
-    return render_template('services.html')
+    action = request.form.get('action')
+    if action == 'send_email':
+        return redirect(url_for('send_email'))
+    elif action == 'read_email':
+        return redirect(url_for('read_email'))
+    else:
+        return 'Invalid action', 400
 
 @application.route('/send_email', methods=['POST', 'GET'])
 def send_email():
@@ -37,9 +43,13 @@ def send_email():
         subject = request.form['subject']
         body = request.form['body']
         service.send_email(subject, body, receiver)
-        return redirect(url_for('services'))
-
+        return 'Email sent'
+    
     return render_template('send_email.html')
+
+@application.route('/read_email', methods=['POST', 'GET'])
+def read_email():
+    return 'Read Email'
 
 if __name__ == '__main__':
     application.run(debug=True)
